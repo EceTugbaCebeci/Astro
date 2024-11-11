@@ -1,0 +1,54 @@
+{% load static %}
+{% load zodiac_tags %}
+
+<nav id="mainnav" class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'images/menu_icon.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            Astro
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'natal_chart' %}">StarMap</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'compatibility_analysis' %}">CompAstro</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'personalized_probabilities' %}">Future?</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'astrofun' %}">AstroFun</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ask_astro' %}">AskAstro</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'update_profile' %}">
+                            Welcome, {{ user.username }}!
+                            {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" alt="Profile Image" width="30" height="30" class="rounded-circle">
+                            {% else %}
+                                <span class="default-zodiac">{{ user|zodiac_default_image|safe }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

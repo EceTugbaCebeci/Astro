@@ -1,0 +1,291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compatibility Analysis</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .select2-container--default .select2-selection--single {
+            color: white;  
+            background-color: #343a40;   
+            border: 1px solid #ced4da;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: white;  
+            background-color: #343a40; 
+        }
+
+        .select2-container--default .select2-results__option {
+            color: white;  
+            background-color: #6c757d;  
+        }
+
+        .select2-container--default .select2-results__option--highlighted {
+            color: white;  
+            background-color: #6c757d;
+        }
+
+        .select2-dropdown {
+            background-color: #6c757d; 
+        }
+
+        .select2-search--dropdown .select2-search__field {
+            background-color: #6c757d; 
+            color: #fff;
+        }
+
+        .bodypage{
+            background-image: url(../static/images/milkyway.jpg);
+        }
+
+        .containerbox {
+            display: flex;
+        }
+
+        #left {
+            width: 500px;
+            margin-left: 200px;
+        }
+
+        #right {
+            width: 500px;
+            margin-left: 100px;
+        }
+
+        .view-comment-btn {
+            background-color: rgba(133, 48, 207, 0.658);  
+            border-color: rgba(133, 48, 207, 0.918); 
+            color: white;
+            margin-left: 50px;
+            height: 43px;
+        }
+
+        .view-comment-btn:hover {
+            background-color: rgba(156, 94, 211, 0.658);
+            border-color: rgba(133, 48, 207, 0.918);
+            color: white; 
+            transition: background-color 2s ease;
+        }
+
+        .delete-btn {
+            background-color: #dc3546c2;  
+            border-color: #dc3545;  
+            color: white;  
+        }
+
+        .delete-btn:hover {
+            background-color: #e26571bd; 
+            border-color: #bd2130; 
+        }
+
+        .modal-content.bg-dark .modal-body {
+            background-color: #343a40 !important; 
+            color: #fff !important;
+        }
+
+        .modal-content.bg-dark .modal-header,
+        .modal-content.bg-dark .modal-footer {
+            background-color: #343a40 !important; 
+            color: #fff !important; 
+        }
+
+        .form-control {
+            background-color: #343a40 !important; 
+            color: #fff !important; 
+            border-color: #6c757d;
+        }
+
+        .form-control::placeholder {
+            color: #ddd !important; 
+        }
+
+        .list-group-item {
+            background-color: #6c757d9c;
+            color: #fff;
+            border-color: #343a4098;
+        }
+        #desc {
+            text-align: center;
+            font-weight: bold;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body class="bodypage">
+    {% include 'navbar.html' %}
+    <br>
+    <br>
+    <h1 class="text-center mb-5">Compatibility Analysis</h1>
+    <div id="desc">
+        <p>Not just you, Add a relative of your choice and we'll tell you roughly about you</p>
+    </div>
+    <hr style="color:white;">
+
+    <!-- Messages Section -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="containerbox">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6" id="left">
+                <h2 class="text-center mb-4">Add Relative</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Add Relative</button>
+                        <br>
+                        <br>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8" id="right">
+                <h2 class="text-center mb-4">Your Relatives</h2>
+                <ul class="list-group">
+                    {% for relative, comment in compatibility_comments %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center relative-info">
+                            <div>
+                                {{ relative.first_name }} {{ relative.last_name }} - {{ relative.role }}
+                                <button type="button" class="btn btn-info btn-sm view-comment-btn" data-comment="{{ comment }}">Comment</button>
+                            </div>
+                            <a href="{% url 'delete_relative' relative.id %}" class="btn btn-danger btn-sm delete-btn" data-id="{{ relative.id }}">Delete</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Comments -->
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Compatibility Comment</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="commentContent"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Delete Confirmation -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this relative?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="#" id="confirmDeleteButton" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#id_birth_country').select2({
+                placeholder: 'Select a country',
+                ajax: {
+                    url: '{% url "load_countries" %}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    text: item.name,
+                                    id: item.code
+                                }
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+
+            $('#id_birth_country').on('change', function() {
+                var country_code = $(this).val();
+                if (country_code === 'TR') {
+                    $('#id_birth_place').select2({
+                        placeholder: 'Select a city',
+                        ajax: {
+                            url: '{% url "load_cities" %}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    search: params.term 
+                                };
+                            },
+                            processResults: function (data) {
+                                if(data.error) {
+                                    return {
+                                        results: []
+                                    };
+                                }
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            text: item.name,
+                                            id: item.name
+                                        };
+                                    })
+                                };
+                            },
+                            cache: true
+                        }
+                    });
+                }
+            });
+
+            var deleteButtons = document.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var deleteUrl = this.getAttribute('href');
+                    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                    document.getElementById('confirmDeleteButton').setAttribute('href', deleteUrl);
+                    modal.show();
+                });
+            });
+
+            var commentButtons = document.querySelectorAll('.view-comment-btn');
+            commentButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var comment = this.getAttribute('data-comment');
+                    $('#commentContent').text(comment);
+                    var modal = new bootstrap.Modal(document.getElementById('commentModal'));
+                    modal.show();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

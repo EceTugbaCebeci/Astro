@@ -1,0 +1,180 @@
+@font-face {
+  font-family: "Montserrat";
+  src: url("./fonts/Montserrat-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+body {
+  background-color: #0e1428 !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #ffd700;
+}
+
+p {
+  color: white;
+}
+
+.py-6 {
+  padding-top: 6rem !important;
+  padding-bottom: 6rem !important ;
+}
+.py7 {
+  padding-top: 9rem !important;
+  padding-bottom: 9rem !important ;
+}
+
+/* Custom styles for buttons */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #ffd700; /* Button background color */
+  color: #0e1428; /* Button text color */
+}
+
+.btn-primary:hover {
+  background-color: #ffa500; /* Button background color on hover */
+  color: #0e1428; /* Button text color on hover */
+  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+}
+
+#hero {
+  background-image: url("../images/hero_background.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Additional styling properties */
+  color: #ffffff; /* Text color on the background */
+}
+#insidehero {
+  background-color: rgba(11, 14, 25, 0.7);
+  border-radius: 1rem;
+  backdrop-filter: blur(5px); /* Adjust the blur radius as needed */
+}
+
+#about{
+  background-image: url("../images/zodiac_back.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+#aboutcover,
+#featurecover {
+  background-color: rgba(5, 8, 16, 0.8);
+}
+
+#services {
+  background-color: #1c233f;
+}
+
+#contact {
+  background-color: #1c233f;
+}
+
+/* Custom styles for the navigation bar */
+#mainnav {
+  background-color: #0e1428; /* Dark background color */
+}
+
+#mainnav .navbar-nav .nav-link {
+  color: #ffffff; /* Text color for links */
+  transition: color 0.3s ease; /* Add a smooth transition effect */
+}
+
+#mainnav .navbar-nav .nav-link:hover {
+  color: #ffd700; /* Text color on hover */
+}
+.navbar-brand {
+  color: #ffd700;
+}
+.navbar-brand:hover {
+  color: #ffd700;
+}
+
+#contact h5,
+a {
+  color: white;
+  text-decoration: none;
+}
+
+#contacticons a {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+#contactcard {
+  background-color: #1c233f;
+  border: none;
+}
+#contactcard label {
+  color: white;
+}
+
+#featuredAstrologers a {
+  font-size: 2rem;
+}
+
+/* Style for the back to top button */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+  background-color: #0e1428;
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+}
+
+.back-to-top i {
+  font-size: 24px;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  /* background: #fff; */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #ffa500; /* Change to your desired color */
+}
+
+
+
+

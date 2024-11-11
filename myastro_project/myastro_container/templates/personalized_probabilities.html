@@ -1,0 +1,129 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Probabilities</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: #fff;
+        }
+        .accordion-button {
+            background-color: #444;
+            border: 1px solid #555;
+            color: #fff;
+        }
+        .accordion-button.collapsed {
+            background-color: #333;
+            border: 1px solid #444;
+            color: #fff;
+        }
+        .accordion-body {
+            background-color: #2b2b2b !important;
+            color: #fff;
+        }
+        .card-header {
+            background-color: #303030;
+            color: #fff;
+        }
+        .btn {
+            text-decoration: none;
+            color: #ffcc00dd; 
+        }
+        .btn:hover {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        .card-body {
+            background-color: #2c2b2bcc;
+            color: #fff;
+        }
+        #desc {
+            text-align: center;
+            font-weight: bold;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Personalized Probabilities</h1>
+        <div id="desc">
+            <p>What awaits you in the near or distant future? Possibilities await you according to the placement of your zodiac sign.</p>
+        </div>
+        <hr style="color:white;">
+        <br>
+        <div class="accordion" id="personalizedAccordion">
+            <div class="card mb-4">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Daily Comment
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#personalizedAccordion">
+                    <div class="card-body">
+                        <p>{{ personalized_prob.daily_comment|format_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Weekly Comment
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#personalizedAccordion">
+                    <div class="card-body">
+                        <p>{{ personalized_prob.weekly_comment|format_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Monthly Comment
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#personalizedAccordion">
+                    <div class="card-body">
+                        <p>{{ personalized_prob.monthly_comment|format_text }}</p> 
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Yearly Comment
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#personalizedAccordion">
+                    <div class="card-body">
+                        <p>{{ personalized_prob.yearly_comment|format_text }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

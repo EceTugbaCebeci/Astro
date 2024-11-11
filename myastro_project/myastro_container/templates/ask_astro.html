@@ -1,0 +1,165 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Astro</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        #askbtn {
+            width: 67px;
+            height: 55px;
+            margin-left: 15px;
+            border-radius: 20px;
+        }
+        .chat-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #34343493;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(212, 187, 88, 0.719);
+        }
+        .accordion-item {
+            margin-bottom: 10px;
+        }
+        .accordion-button {
+            background-color: #34343493;
+            border: 1px solid #919bc67f;
+            color: #fff;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #3c3c3c;
+            border-color: #6c757d;
+            color: #fff;
+        }
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: #6c757d;
+        }
+        .accordion-button:hover {
+            color: #ffa500;
+        }
+        .accordion-body {
+            background-color: #3c3c3c;
+            color: #fff;
+        }
+        .loading-spinner {
+            display: none;
+            margin-top: 20px;
+        }
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+            border-width: 0.25rem;
+            color:rgba(235, 139, 31, 0.842);
+            margin-left: 150px;
+        }
+        .form-control {
+            background-color: #343a40 !important; 
+            color: #fff !important; 
+            border-color: #6c757d;
+            border-radius: 10px;
+        }
+        .form-control::placeholder {
+            color: #ddd !important; 
+        }
+        .input-group {
+            margin-top: 20px;
+        }
+        #desc {
+            text-align: center;
+            font-weight: bold;
+            font-size: large;
+        }
+        .text-muted {
+            color: #ffd700 !important;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <br>
+    <br>
+    <h1 class="text-center mb-4">Ask Astro</h1>
+        <div id="desc">
+            <p>You ask something too.</p>
+            <p>Remember you only have 3 per day!</p>
+            <hr style="color:white;">
+        </div>
+
+    <div class="chat-container">
+        <div class="accordion" id="accordionQuestions">
+            {% for question in questions %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ question.id }}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ question.id }}" aria-expanded="true" aria-controls="collapse{{ question.id }}">
+                            <strong>Question:</strong> {{ question.question }}
+                            <small class="text-muted ms-2">{{ question.created_at }}</small>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ question.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ question.id }}" data-bs-parent="#accordionQuestions">
+                        <div class="accordion-body">
+                            {{ question.answer|default_if_none:"No answer yet" | format_text }}
+                            <small class="text-muted d-block mt-2">{{ question.created_at }}</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <form method="post" novalidate class="chat-input" id="questionForm">
+            {% csrf_token %}
+            <div class="input-group">
+                <textarea class="form-control" name="question" placeholder="Type your question here..." rows="3"></textarea>
+                <button type="submit" class="btn btn-primary" id="askbtn">Ask</button>
+            </div>
+            <div class="loading-spinner spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </form>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                </div>
+                <div class="modal-body" id="modalMessageBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        document.getElementById('questionForm').addEventListener('submit', function() {
+            document.querySelector('.loading-spinner').style.display = 'inline-block';
+        });
+
+        document.getElementById('messageModal').addEventListener('hidden.bs.modal', function () {
+            document.querySelector('body').classList.remove('modal-open');
+            document.querySelector('.modal-backdrop').remove();
+        });
+
+        {% if error_message %}
+            document.getElementById('modalMessageBody').innerHTML = '{{ error_message }}';
+            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        {% endif %}
+
+        {% if questions|length >= 3 %}
+            document.getElementById('modalMessageBody').innerHTML = 'You have reached your daily limit of 3 questions. See you tomorrow!';
+            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        {% endif %}
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0E1428">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <title>Register - Astro</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        #bodybutregister {
+            background-color: #0E1428 !important;
+        }
+    
+        .form-control {
+            background-color: #6c757d56 !important;
+            color: white !important;
+            border: 1px solid #6c757d !important; 
+        }
+    
+        .form-control::placeholder {
+            color: #ddd !important;
+        }
+    
+        .form-control:focus {
+            border-color: #6c757d !important; 
+            box-shadow: none !important; 
+        }
+    
+        .btn-signup {
+            background-color: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            border-radius: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+    
+        .btn-signup:hover {
+            background-color: #ffa500;
+            color: white;
+            font-weight: bold;
+        }
+    
+        .select2-container--default .select2-results__option {
+            background-color: #6c757d56; 
+            color: #fff; 
+        }
+    
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #fff; 
+        }
+    
+        .select2-container--default .select2-selection--single {
+            background-color: #6c757d56; 
+            border: 1px solid #000; 
+        }
+    
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #fff transparent transparent transparent; 
+        }
+    
+        .select2-container--default .select2-results__options {
+            max-height: 300px; 
+            background-color: #6c757d56; 
+        }
+    
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #333; 
+            color: #fff; 
+        }
+    
+        .select2-dropdown {
+            background-color: #6c757dda; 
+        }
+    
+        .select2-search--dropdown .select2-search__field {
+            background-color: #6c757dda; 
+            color: #fff;
+        }
+        
+    </style>
+    
+
+</head>
+<body class="bg-dark text-white" id="bodybutregister">
+    <div class="containerLogin">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <h2 class="text-center mb-4">Create Your Astro Account</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.username.label }}</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.password1.label }}</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.password2.label }}</label>
+                        {{ form.password2 }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.birth_date.label }}</label>
+                        {{ form.birth_date }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.birth_hour.label }}</label>
+                        {{ form.birth_hour }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.birth_country.label }}</label>
+                        {{ form.birth_country }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.birth_place.label }}</label>
+                        {{ form.birth_place }}
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary" style="font-weight: bold; margin-bottom: 20px;">Sign Up</button>
+                    </div>
+                </form>
+                <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}" class="btn-signup">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#id_birth_country').select2({
+                placeholder: 'Select a country',
+                ajax: {
+                    url: '{% url "load_countries" %}',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    text: item.name,
+                                    id: item.code
+                                }
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+    
+            $('#id_birth_country').on('change', function() {
+                var country_code = $(this).val();
+                if (country_code === 'TR') {
+                    $('#id_birth_place').select2({
+                        placeholder: 'Select a city',
+                        ajax: {
+                            url: '{% url "load_cities" %}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    search: params.term 
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            text: item.name,
+                                            id: item.name
+                                        };
+                                    })
+                                };
+                            },
+                            cache: true
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

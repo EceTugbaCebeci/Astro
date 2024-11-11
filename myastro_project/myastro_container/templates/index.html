@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0E1428">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <title>Astro</title>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        #music-icon {
+            font-size: large;
+            color: #ffd700;
+        }
+
+        .contact-info {
+            display: inline-block;
+            justify-content: space-around;
+            padding: 20px 0;
+            margin: auto;
+            margin-left: 352px;
+        }
+
+        .contact-info div {
+            flex: 1;
+            text-align: center;
+            padding: 0 20px;
+            height: 20px;
+        }
+
+        #contact {
+            height: 130px;
+            background-image: url(../static/images/banner.jpg);
+        }
+       
+    </style>
+</head>
+
+<body>
+    <nav id="mainnav" class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'images/menu_icon.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                Astro
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact Us</a>
+                    </li>
+                </ul>
+                <button id="music-toggle" class="btn btn-link text-white">
+                    <i id="music-icon" class="bi bi-volume-up"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- hero section -->
+    <div id="hero" class="py-6 d-md-py7">
+        <div class="container ">
+            <div id="insidehero" class="p-3 py-5 my-5 p-md-5 blurred-content">
+                <h2 class="mb-4">Unlock the Power of the Cosmos with Personalized Astrology Readings</h2>
+                <p class="mb-4">Welcome to Astro, where the stars align to guide you on your journey of self-discovery. Our expert astrologers are here to provide you with in-depth readings that reveal the secrets of the universe and illuminate your path.</p>
+
+                <p class="mb-4">Ready to embark on a transformative journey? Book a reading or consultation today and embark on a path of enlightenment.</p>
+
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-reveal" id="about">
+        <div id="aboutcover" class="py-5">
+            <div class="container">
+                <h3 class="text-center">About Astro</h3>
+                <div class="row py-5">
+                    <div class="col-md-6 text-center order-md-2">
+                        <img class="my-4" height="150" src="{% static 'images/space_icon.png' %}" alt="Stellar Insights Logo">
+                    </div>
+                    <div class="col-md-6 order-md-1">
+                        <p>At Astro, we believe that astrology is more than just a practice—it's a journey of self-discovery and empowerment. Our team of experienced astrologers is dedicated to helping you uncover the mysteries of the cosmos and harness the wisdom of the stars. With a deep understanding of astrological principles and a passion for guiding others, we're here to provide you with insightful readings, transformative consultations, and a personalized experience that illuminates your path to self-awareness and growth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="services" class="py-5 scroll-reveal">
+        <div class="container">
+            <h3 class="text-center">Our Services</h3>
+            <div class="text-center py-5">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img class="my-4" src="{% static 'images/icons/stars.png' %}" alt="Natal Chart Readings Icon">
+                        <h4> Natal Chart Readings </h4>
+                        <p> Discover your unique personality, strengths, and challenges based on the alignment of the stars at your birth.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <img class="my-4" src="{% static 'images/icons/love.png' %}" alt="Compatibility Analysis Icon">
+                        <h4>Compatibility Analysis</h4>
+                        <p>Gain insights into your relationships by exploring the compatibility between your astrological signs.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <img class="my-4" src="{% static 'images/icons/horoscope.png' %}" alt="Personalized Forecasts Icon">
+                        <h4>Personalized Probabilities</h4>
+                        <p> Get guidance on upcoming events and challenges in your life with personalized astrological forecasts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="testimonials" class="py-5 scroll-reveal">
+        <div class="container">
+            <h3 class="text-center">Testimonials</h3>
+            <div class="py-5">
+                <!-- Swiper -->
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div>
+                                <h5 class="mb-4">Emily Thompson, Marketing Manager</h5>
+                                <p>"Astro has been a guiding light in my life. The personalized horoscope reading I received was incredibly accurate and provided me with insights that helped me make important decisions."</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div>
+                                <h5 class="mb-4">John Smith, Entrepreneur</h5>
+                                <p>"I was skeptical at first, but after my consultation, I'm a believer. The astrologer's wisdom and insights into my personality were astonishingly accurate. I gained clarity about my life's purpose."</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div>
+                                <h5 class="mb-4">Lisa Johnson, Teacher</h5>
+                                <p>"I've had readings from various astrologers, but Astro stands out. The astrologers here combine deep knowledge with a genuine passion for helping people. Their forecasts have been spot-on."</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact" class="py-5 scroll-reveal">
+        <div class="container">
+            <h3 class="text-center">Contact Us</h3>
+            <div class="row py-5">
+                <div class="col-md-6 contact-info">
+                    <div>
+                        <h4 class="mt-4"></h4>
+                        <h5><a href="tel:+1 234 56 78"><span class="me-5"> +1(800)555-1234</span></a></h5>
+                    </div>
+                    <div>
+                        <h4 class="mt-4"></h4>
+                        <h5><a href="mailto:support@astro.com"><span class="me-5">astro.contactinfo@gmail.com</span></a></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="background-music" src="{% static 'images/midnight.mp3' %}" loop></audio>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+    <script defer src="{% static 'js/script.js' %}"></script>
+
+    <!-- Swiper JS -->
+    <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var swiper = new Swiper('.mySwiper', {
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+
+            var music = document.getElementById('background-music');
+            var musicToggle = document.getElementById('music-toggle');
+            var musicIcon = document.getElementById('music-icon');
+            var isPlaying = false;
+
+            musicToggle.onclick = function() {
+                if (isPlaying) {
+                    music.pause();
+                    musicIcon.classList.remove('bi-volume-mute');
+                    musicIcon.classList.add('bi-volume-up');
+                } else {
+                    music.play().catch(error => {
+                        console.log('Music play was prevented:', error);
+                    });
+                    musicIcon.classList.remove('bi-volume-up');
+                    musicIcon.classList.add('bi-volume-mute');
+                }
+                isPlaying = !isPlaying;
+            };
+        });
+    </script>
+</body>
+</html>

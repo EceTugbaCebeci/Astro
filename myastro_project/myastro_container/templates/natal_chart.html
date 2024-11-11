@@ -1,0 +1,216 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natal Chart</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .card {
+            perspective: 1000px;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            margin-bottom: 75px;
+            margin-top: 25px;
+            background-color: rgba(133, 48, 207, 0) !important;
+        }
+
+        .card-front:hover {
+            background-color: #03a5db98 !important;
+            transition: background-color 0.5s ease !important;
+            cursor: pointer;
+        }
+
+        .card-front {
+            background-color: rgba(132, 48, 207, 0.5) !important;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.6s, height 0.6s ease;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #343a40;
+            color: #fff; 
+        }
+
+        .modal-content .modal-body {
+            color: #fff !important; 
+            background-color: #343a40b7 !important; 
+        }
+
+        .modal-lg {
+            max-width: 80%;
+        }
+
+        .modal-content .modal-body h2, 
+        .modal-content .modal-body p {
+            color: #fff !important;
+        }
+
+        .bodypage {
+            background-color: #0e1428;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh; 
+        }
+
+        .video-background {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            color: #fff; 
+            flex: 1;
+        }
+
+        .modal-header .btn-close {
+            background-color: #ffd700;
+            border-radius: 50%;
+            padding: 0.5rem;
+        }
+
+        .modal-header .btn-close:hover {
+            background-color: #e0c200;
+        }
+
+        .modal-title {
+            color: #ffd700 !important;
+        }
+
+        #desc {
+            text-align: center;
+            font-weight: bold;
+            font-size: large;
+        }
+
+    </style>
+</head>
+
+<body class="bodypage">
+    {% include 'navbar.html' %}
+
+    <div class="video-background">
+        <video autoplay muted loop>
+            <source src="{% static 'images/livesky.mp4' %}" type="video/mp4">
+            ERROR
+        </video>
+    </div>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Your Natal Chart</h1>
+        <div id="desc">
+            <p>You entered your birth information and left yourself to us. We calculated everything, here is you in detail.</p>
+        </div>
+        <hr style="color:white;">
+        <div class="row">
+            {% for planet, sign in natal_chart_data.items %}
+                <div class="col-md-4 mb-4">
+                    <div class="card" data-planet="{{ planet }}" data-sign="{{ sign }}" data-comment="{{ ai_comments|get_item:planet|format_text|default:'No comment available' }}">
+                        <div class="card-inner">
+                            <div class="card-front bg-primary text-white">
+                                <h3>{{ planet|capfirst }}: {{ sign|full_sign }}</h3>
+                            </div>
+                            <div class="card-back">
+                                <h3">{{ planet|capfirst }}</h3>
+                                <p>{{ ai_comments|get_item:planet|format_text|default:'No comment available' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:rgba(52, 58, 64, 0.634)">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Sign Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2 id="modal-planet-title"></h2>
+                    <p id="modal-comment-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        const signMap = {
+            'Ari': 'Aries',
+            'Tau': 'Taurus',
+            'Gem': 'Gemini',
+            'Can': 'Cancer',
+            'Leo': 'Leo',
+            'Vir': 'Virgo',
+            'Lib': 'Libra',
+            'Sco': 'Scorpio',
+            'Sag': 'Sagittarius',
+            'Cap': 'Capricorn',
+            'Aqu': 'Aquarius',
+            'Pis': 'Pisces'
+        };
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                const planet = this.getAttribute('data-planet');
+                const sign = this.getAttribute('data-sign');
+                const comment = this.getAttribute('data-comment');
+                const fullSign = signMap[sign] || sign;
+
+                document.getElementById('modal-comment-text').innerHTML = comment;  
+
+                const commentModal = new bootstrap.Modal(document.getElementById('commentModal'));
+                commentModal.show();
+            });
+        });
+    </script>
+</body>
+</html>

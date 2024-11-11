@@ -1,0 +1,185 @@
+{% load static %}
+{% load zodiac_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #0e1428;
+            color: #fff;
+        }
+        .form-control {
+            background-color: #343a40 !important; 
+            color: #fff !important; 
+            border-color: #6c757d;
+        }
+        .form-control::placeholder {
+            color: #ddd !important; 
+        }
+        .form-control:focus {
+            border-color: #6c757d !important; 
+            box-shadow: none !important; 
+        }
+        .btn-primary {
+            background-color: #ffd700;
+            border-color: #ffd700;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #e6be00;
+            border-color: #e6be00;
+            color: #000;
+        }
+        .modal-content {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .modal-header .btn-close {
+            background-color: #ffd700;
+        }
+        .modal-header .btn-close:hover {
+            background-color: #ffc107;
+        }
+        .modal-title {
+            color: #ffd700;
+        }
+        #sendCodeButton {
+            margin-top: 10px;
+            background-color: #ffd700;
+            border-color: #ffd700;
+            color: #000;
+        }
+        #sendCodeButton:hover {
+            background-color: #e6be00;
+            border-color: #e6be00;
+            color: #000;
+        }
+        .form-control[readonly] {
+            background-color: #6c757d !important; 
+            color: #fff !important; 
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="container mt-4">
+        <h2>Update Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ profile_form.as_p }}
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        </form>
+        
+        <form id="sendCodeForm" method="POST" action="{% url 'send_verification_code' %}">
+            {% csrf_token %}
+            <hr>
+            <p>If you want to change your password,</p>
+            <button type="button" id="sendCodeButton" class="btn btn-primary">Click Here</button>
+            <br>
+            <br>   
+        </form>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalMessageBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verificationModalLabel">Enter Verification Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="verificationMessage" class="alert" style="display: none;"></div>
+                    <form id="verificationForm" method="POST" action="{% url 'verify_code' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="verification_code" class="form-label">Verification Code</label>
+                            <input type="text" class="form-control" id="verification_code" name="verification_code" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verify</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            $.ajax({
+                url: "{% url 'load_cities' %}",
+                method: "GET",
+                success: function(data) {
+                    let birthPlaceField = $("#id_birth_place");
+                    birthPlaceField.empty();
+                    data.forEach(function(city) {
+                        birthPlaceField.append(new Option(city.name, city.name));
+                    });
+                    birthPlaceField.val("{{ user.birth_place }}");
+                },
+                error: function() {
+                    console.error("Failed to fetch cities.");
+                }
+            });
+
+            $('#sendCodeButton').on('click', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: "{% url 'send_verification_code' %}",
+                    method: "POST",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#verificationMessage').text(response.message).addClass('alert-success').removeClass('alert-danger').show();
+                            $('#verificationModal').modal('show');
+                        } else {
+                            $('#verificationMessage').text(response.message).addClass('alert-danger').removeClass('alert-success').show();
+                            $('#verificationModal').modal('show');
+                        }
+                    },
+                    error: function() {
+                        $('#verificationMessage').text("Failed to send verification code. Please try again.").addClass('alert-danger').removeClass('alert-success').show();
+                        $('#verificationModal').modal('show');
+                    }
+                });
+            });
+
+            {% if messages %}
+                let modalMessage = '';
+                {% for message in messages %}
+                    modalMessage += '{{ message }}<br>';
+                {% endfor %}
+                document.getElementById('modalMessageBody').innerHTML = modalMessage;
+                var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+            {% endif %}
+            
+        });
+    </script>
+</body>
+</html>

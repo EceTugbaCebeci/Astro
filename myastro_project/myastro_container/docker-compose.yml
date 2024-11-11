@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "
+      if [ ! -f /code/db.sqlite3 ]; then
+        python manage.py migrate;
+        sqlite3 /code/db.sqlite3 < /code/data-dump.sql;
+      fi;
+      python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=myastro.settings
+
